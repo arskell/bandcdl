@@ -4,16 +4,34 @@ import re
 
 class Parser(HTMLParser):
     text = "" 
-    mark = True
+    image_link = ""
+    mark_txt = True
+    mark_link = True
+    in_art_id = False
     def handle_starttag(self, tag, attrs):
-        if self.mark:
+        if (self.mark_link or self.mark_txt) and len(attrs) == 0:
+            return
+    
+        if self.mark_link:
+            if self.in_art_id!=True and tag == "div" and attrs[0][0] == "id" and attrs[0][1] == "tralbumArt":
+                self.in_art_id = True
+                return
+            
+            if self.in_art_id and tag == "a" and attrs[0][0] == "class" and attrs[0][1] == "popupImage":
+                in_art_id = False
+                for tmp in attrs[1:]:
+                    if tmp[0] == "href":
+                        self.image_link = tmp[1]
+                        self.mark_link = False
+                        return
+        if self.mark_txt:
             if len(attrs) <= 1:
                 return
             if tag == "meta" and attrs[0][0] == "name" and attrs[0][1] ==  "Description":
                 for tmp in attrs[1:]:
                     if tmp[0] == "content":
                         self.text = tmp[1]
-                        self.mark = False
+                        self.mark_txt = False
                         return
 
     
@@ -46,6 +64,9 @@ print("Enter save directory:")
 save_path = input()
 if save_path[-1]!='/':
     save_path+='/'
+
+
+urllib.request.urlretrieve(parser.image_link,save_path+"cover_"+ re.sub(r'[\/:*?"<>|]+', '_', re.search(r'album/.+', path).group(0)) + ".jpg")
 
 for i in range(0, len(album_list)):
     print("downloading {0}...".format(album_list[i]))
