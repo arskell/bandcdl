@@ -4,14 +4,17 @@ import re
 
 class Parser(HTMLParser):
     text = "" 
-        
+    mark = True
     def handle_starttag(self, tag, attrs):
-        if len(attrs) <= 1:
-            return
-        if tag == "meta" and attrs[0][0] == "name" and attrs[0][1] ==  "Description":
-            for tmp in attrs[1:]:
-                if tmp[0] == "content":
-                    self.text = tmp[1]
+        if self.mark:
+            if len(attrs) <= 1:
+                return
+            if tag == "meta" and attrs[0][0] == "name" and attrs[0][1] ==  "Description":
+                for tmp in attrs[1:]:
+                    if tmp[0] == "content":
+                        self.text = tmp[1]
+                        self.mark = False
+                        return
 
     
 print("Enter url path to the album: ")
