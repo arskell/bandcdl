@@ -9,7 +9,7 @@ class Parser(HTMLParser):
     mark_link = True
     in_art_id = False
     def handle_starttag(self, tag, attrs):
-        if (self.mark_link or self.mark_txt) and len(attrs) == 0:
+        if (not self.mark_link or not self.mark_txt) and len(attrs) == 0:
             return
     
         if self.mark_link:
