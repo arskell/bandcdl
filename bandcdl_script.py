@@ -56,7 +56,8 @@ parser.feed(data)
 parser.text = re.sub('&#39;', "'", parser.text)
 parser.text = re.sub('&quot;', '"', parser.text)
 
-album_list_txt = re.findall(r'\d+[.][ ].+\n', parser.text)
+parser.text = "\n" + parser.text
+album_list_txt = re.findall(r'\n\d+[.][ ].+', parser.text)
 
 links = re.findall(r'https://t4.bcbits.com/stream/[^"]+', data)
 
